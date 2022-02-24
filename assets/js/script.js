@@ -1,6 +1,7 @@
 var formEl = document.querySelector("#task-form");
 var tasksToDoEl = document.querySelector("#tasks-to-do");
 var taskIdCounter = 0;
+var pageContentEl = document.querySelector("#page-content");
 
 var taskFormHandler = function(event) {
     event.preventDefault();
@@ -96,6 +97,53 @@ var createTaskActions = function(taskId) {
     actionContainerEl.appendChild(statusSelectEl);
 
     return actionContainerEl;
-}
+};
+
+// edit a task on the form
+var editTask = function(taskId) {
+    console.log("editing task #" + taskId);
+
+    // get task list item element
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+
+    // get content from task name and type
+    var taskName = taskSelected.querySelector("h3.task-name").textContent;
+
+    var taskType = taskSelected.querySelector("span.task-type").textContent;
+
+    document.querySelector("input[name='task-name']").value = taskName;
+    document.querySelector("select[name='task-type'").value = taskType;
+
+    // change the 'add task' btn to 'save task'
+    document.querySelector("#save-task").textContent = "Save Task";
+
+    // include the task's id to the edited task
+    formEl.setAttribute("data-task-id", taskId);
+};
+
+// delete a task from the form
+var deleteTask = function(taskId) {
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+    taskSelected.remove();
+};
+
+var taskButtonHandler = function(event) {
+    // get target element from event
+    var targetEl = event.target;
+
+    // edit button was clicked
+    if (targetEl.matches(".edit-btn")) {
+        var taskId = targetEl.getAttribute("data-task-id");
+        editTask(taskId);
+    }
+    // delete button was clicked
+    if (targetEl.matches(".delete-btn")) {
+        // get the element's task id
+        var taskId = targetEl.getAttribute("data-task-id");
+        deleteTask(taskId);
+    }
+};
+
+pageContentEl.addEventListener("click", taskButtonHandler);
 
 formEl.addEventListener("submit", taskFormHandler);
